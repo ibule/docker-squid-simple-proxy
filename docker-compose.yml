@@ -4,10 +4,10 @@ services:
   squid-proxy:
     build: .
     environment:
-      - PORT=${PORT}
-      - SSH_PORT=${SSH_PORT}
-      - SQUID_USER=${SQUID_USER}
-      - SQUID_PASS=${SQUID_PASS}
+      - PORT=3128
+      - SSH_PORT=22
+      - SQUID_USER=admin
+      - SQUID_PASS=admin
     image: thelebster/docker-squid-simple-proxy
     hostname: squid-proxy
     container_name: squid-proxy
@@ -18,24 +18,28 @@ services:
         max-size: "10m"
         max-file: "50"
         tag: squid-proxy
-    volumes:
-      - ./var/cache:/var/spool/squid
-      - ./var/log:/var/log/squid
+    # volumes:
+    #   - ./var/cache:/var/spool/squid
+    #   - ./var/log:/var/log/squid
     ports:
-      - ${PORT}:3128
-      - ${SSH_PORT}:22
+      - 3128:3128
+      - 22:22
     networks:
       - httpsProxy
     
-  nghttpx_polipo:
-    image: ibule/nghttpx_polipo:v2.1
+  nghttpx:
+    image: ibule/nghttpx:v1.3
+    hostname: nghttpx
+    container_name: nghttpx
     volumes:
       - ./certs:/certs
     ports:
       - 9699:9699
     environment:
-      - CERT=${CERT}
-      - KEY=${KEY}
+      - BIND_HOST=squid-proxy
+      - BIND_PORT=3128
+      - CERT=cert.crt
+      - KEY=key.key
     networks:
       - httpsProxy
     restart: always
