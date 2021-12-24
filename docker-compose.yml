@@ -24,3 +24,20 @@ services:
     ports:
       - ${PORT}:3128
       - ${SSH_PORT}:22
+    networks:
+      - httpsProxy
+    
+  nghttpx_polipo:
+    image: ibule/nghttpx_polipo:v2.1
+    volumes:
+      - ./certs:/certs
+    ports:
+      - 9699:9699
+    environment:
+      - CERT=${CERT}
+      - KEY=${KEY}
+    networks:
+      - httpsProxy
+    restart: always
+networks:
+  httpsProxy:
