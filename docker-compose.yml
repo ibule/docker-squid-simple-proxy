@@ -1,4 +1,5 @@
-version: '3'
+version: '2'
+
 
 services:
   squid-proxy:
@@ -6,8 +7,8 @@ services:
     environment:
       - PORT=3128
       - SSH_PORT=22
-      - SQUID_USER=admin
-      - SQUID_PASS=admin
+      - SQUID_USER=ibule
+      - SQUID_PASS=ibule
     image: thelebster/docker-squid-simple-proxy
     hostname: squid-proxy
     container_name: squid-proxy
@@ -18,12 +19,12 @@ services:
         max-size: "10m"
         max-file: "50"
         tag: squid-proxy
-    # volumes:
-    #   - ./var/cache:/var/spool/squid
-    #   - ./var/log:/var/log/squid
+    volumes:
+      - ./var/cache:/var/spool/squid
+      - ./var/log:/var/log/squid
     ports:
       - 3128:3128
-      - 22:22
+      - 222:22
     networks:
       - httpsProxy
     
@@ -32,14 +33,14 @@ services:
     hostname: nghttpx
     container_name: nghttpx
     volumes:
-      - /www/server/panel/vhost/cert/ibule.xyz:/certs
+      - /root/certs:/certs
     ports:
       - 9699:9699
     environment:
       - BIND_HOST=squid-proxy
       - BIND_PORT=3128
-      - CERT=fullchain.pem 
-      - KEY=privkey.pem
+      - CERT=CERT.crt
+      - KEY=KEY.key
     networks:
       - httpsProxy
     restart: always
