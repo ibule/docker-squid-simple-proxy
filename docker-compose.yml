@@ -32,14 +32,14 @@ services:
     hostname: nghttpx
     container_name: nghttpx
     volumes:
-      - ./certs:/certs
+      - /www/server/panel/vhost/cert/ibule.xyz:/certs
     ports:
       - 9699:9699
     environment:
       - BIND_HOST=squid-proxy
       - BIND_PORT=3128
-      - CERT=cert.crt
-      - KEY=key.key
+      - CERT=fullchain.pem 
+      - KEY=privkey.pem
     networks:
       - httpsProxy
     restart: always
